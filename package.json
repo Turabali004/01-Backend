@@ -1,12 +1,25 @@
 {
-  "name": "01_backend",
-  "module": "index.js",
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "This is my backend learning journey",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
+  },
+  "keywords": [
+    "javascript",
+    "backend"
+  ],
+  "author": "Turab_Ali",
+  "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "nodemon": "^3.1.4"
+    "mongoose": "^8.5.2"
   },
   "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "type": "module"
+    "nodemon": "^3.1.4",
+    "prettier": "^3.3.3"
+  }
 }
