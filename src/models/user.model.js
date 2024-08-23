@@ -48,6 +48,8 @@ const userSchema = new Schema(
   },
   { timestamps: true }
 );
+
+// Check if the password is modify 
 userSchema.pre("save", async function (next){
     if(!this.isModified("password")) return next();
 
@@ -89,4 +91,3 @@ userSchema.methods.generateRefreshToken = function(){
 }
 
 export const User = mongoose.model("User", userSchema);
-  
