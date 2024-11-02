@@ -33,11 +33,12 @@ const generateAccessAndRefreshToken = async (userId) => {
 
 // Register User
 const registerUser = asyncHandler(async (req, res) => {
-  // console.log("Register User" + req.files);
-  // console.log("This is req.body data", req.body)
+  // console.log("Register User files" + req.files);
+  console.log("This is req.body data", req.body)
 
   const { fullName, email, password, username } = req.body;
-  console.log(`This is my full name ${fullName} this is email ${email}`);
+  console.log(`This is my full name ${fullName} this is email ${email}
+    `);
 
   if (
     [fullName, email, password, username].some((field) => field?.trim() === "")
@@ -54,13 +55,21 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   const avatarLocalPath = req.files?.avatar[0]?.path;
-  const coverImageLocalPath = req.files?.coverImage[0]?.path;
+  console.log("Uploading avatar from path: ", avatarLocalPath);
+
+  // const coverImageLocalPath = req.files?.coverImage[0]?.path;
+  let coverImageLocalPath;
+  if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+    coverImageLocalPath = req.files.coverImage[0].path
+  }
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar is required");
   }
 
   const avatar = await uploadOnCloudinary(avatarLocalPath);
+  console.log(`This is my avatar${avatar}`);
+
   const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
   if (!avatar) {
@@ -186,26 +195,26 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       incomingRefreshToken,
       process.env.REFRESH_TOKEN_SECRET
     );
-  
+
     const user = await User.findById(decodedToken?._id);
-  
+
     if (!user) {
       throw new ApiError(401, "invalid refresh token");
     }
-  
+
     if (incomingRefreshToken !== user?.refreshToken) {
       throw new ApiError(401, "Refresh token is expired or used");
     }
-  
+
     const options = {
       httpOnly: true,
       secure: true,
     };
-  
+
     const { accessToken, newRefreshToken } = await generateAccessAndRefreshToken(
       user._id
     );
-  
+
     return res
       .status(200)
       .cookie("accessToken", accessToken, options)
@@ -221,4 +230,5 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     throw new Error(401, error?.message || "Inalid refresh token");
   }
 });
+
 export { registerUser, loginUser, logoutUser, refreshAccessToken };
